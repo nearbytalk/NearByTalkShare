@@ -1,0 +1,70 @@
+idbytes is the only one identity of user
+
+at same-host:
+http client login -> idBytes already in DB but userName not same 
+                      (with no online user clash)
+                      ->treat as user change name->change DB name
+http client login -> userName already in but idBytes not same 
+                      (no matter in DB or online user)
+                      ->treat as different user-> try another userName
+http client login -> idBytes with online user clash 
+                     (in different http session)
+                     ->treat as re-login->reject
+
+different host:
+same idBytes but different userName -> 
+(option1 :decide lastest userName by createDate
+(or lastAccessDate(no such column yet))
+
+(option2: cache change set (decide by date) and notify user to decide)
+
+(option3: deny any changes)
+)
+
+same userName but different idBytes ->assign a random(serial) 
+userName to synced message. if this user logined later, he/she
+will use his/her newest userName to update info of host
+(if there is still clash, user can be notified)
+
+ 
+http client:
+
+message received only contains userName (which is assumed unique at same host, same session)
+so client can not steal other's idBytes,but can use userName to address user.
+(idBytes translated by host) 
+
+
+message sent from client will always be verified by host,
+assume the correct sender info
+
+createDate will be treated as part of message idBytes generate source.
+for that same user can talk the same thing in different times.(need to
+consider flush defense)
+ 
+ 
+a message save queue to do batch save.
+client user received "talk success" means message is verified by server
+but not assume save to datastore.(file upload should be treated separately)
+use jetty continuation to notify user lastest message . 
+normal message query(by date) always do online cache search first.
+without online cache, user must query datastore everytime to determine
+how many messages pubed after date.
+further more,with online cache ,we can extend client to act as "IM mode"
+every new message is sent to client immediately 
+(combine jetty continuation and cache update notify)
+
+eventListener design:
+ has a continuation ,use atomic queue in continuation to store
+ should has two types
+ 
+lazy type: 
+			resume continuation only when new message number out of
+			half of max keep length.
+           this assume all online message will be sent to user by batch 
+           (with few noise and request/response, but client must do query request
+           frequently enough), but can cache enough when client do receive action
+           
+eager type: triggered every new message comes in,allow client to act in IM mode
+           
+
+file share delete only happend when no one is accessing MessageService

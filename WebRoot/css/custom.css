@@ -1,0 +1,225 @@
+.user-avatar-img {
+	max-width:36px;
+	max-height:36px;
+	float:left;
+}
+
+#messageContainer {
+    padding:5px;
+}
+
+#imgAvatar{
+    max-width:256px;
+    max-height:256px;
+}
+
+.ui-listview .user-name-text {
+	color : rgb(0,0,255);
+	margin: 0;
+	padding-left:5px;
+	padding-top:3px;
+}
+
+.message-share-img{
+     max-width:256px;
+     max-height:256px;
+}
+
+.eager-message-dt{
+     width: 45px;
+     float: left;
+     color: #888;
+     font-size: 10px;
+     text-align: right;
+     padding-top: 4px;
+
+     float: left;
+     overflow: hidden;
+     white-space: nowrap;
+}
+
+.eager-message-dd{
+     overflow: auto;
+     padding: 2px 0 1px;
+     padding-left: 15px;
+     margin: 0 0 2px 0;
+     white-space: -o-pre-wrap;
+     word-wrap: break-word;
+}
+
+.message-info-bar{
+     font-size: 10px;
+     font-weight: normal;
+     position:absolute;
+     right:15px;
+}
+
+
+.overthrow-enabled .overthrow {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.tnm-message-wrapper .tnm-message-list{
+    border-radius:0;
+    margin:3px 0px 3px 0px;
+}
+
+.tnm-message-wrapper{
+    border-style:solid;
+    border-width:1px;
+    border-color:#387bbe;
+}
+
+
+#imgViewImageShare{
+     min-width:50%;
+     min-height:50%;
+}
+
+/*use following two class to limit image size,but keep ratio*/
+.size-limited-img-width{
+     max-width:80%;
+}
+
+.size-limited-img-height{
+     max-width:80%;
+}
+
+/* listview  compact layout*/
+.ui-listview .lazyMessageList-li{
+     padding-left:0px;
+     padding-top:1px;
+     padding-bottom:15px;
+     padding-right:1px;
+}
+
+
+.ui-listview>li .lazyMessageList-li-p{
+     margin-top:0.6em;
+    white-space:normal;
+    word-wrap: break-word;
+}
+
+.lazyMessageList-shortMessage{
+     white-space:normal;
+     word-wrap: break-word;
+}
+
+.longMessage{
+
+}
+
+/*only used to distinct other dom node and message.plainText*/
+.plain-text{
+     padding-left:4px;
+}
+
+.topic{
+     color : rgb(0,0,255);
+}
+
+.referenced-message{
+    background: #ffe;
+    border: 1px solid #777;
+}
+
+#textReferenceMessagePreview {
+     display:none;
+     overflow: hidden;
+     text-overflow: ellipsis;
+     -o-text-overflow: ellipsis;
+     white-space: nowrap;
+     width: 100%;
+
+     margin-top:3px;
+     margin-bottom:3px;
+}
+
+#divCollapseTalk {
+    
+    margin-top:0px;
+    margin-bottom:5px;
+
+}
+
+.compat-margin-top-bottom {
+    margin-top:3px;
+    margin-bottom:3px;
+    padding-top:0px;
+    padding-bottom:0px;
+}
+
+#divCollapseTalk div.ui-collapsible-content {
+     padding:0px;
+}
+
+#talkFunction > li 
+{
+
+    width: 20% !important;  /* 12.5% for 8 tabs wide */
+    clear: none !important;  /* Prevent line break caused by ui-block-a */
+       
+}
+
+.margin-bottom-less {
+    margin-bottom:3px;
+}
+
+#listViewVoteOptions {
+    padding-left:0px;
+    margin-top:0px;
+    margin-bottom:0px;
+}
+
+#listViewVoteOptions > li {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 10px;
+
+    padding-top:0;
+    padding-bottom:0;
+}
+
+#listViewVoteOptions > li > div{
+    margin: 2px;
+    margin: 3px;
+}
+
+
+#divVoteHeader > div.ui-controlgroup-controls {
+    width:100%;
+}
+
+#divVoteHeader > div.ui-controlgroup-controls > div.ui-slider{
+    margin-left:5px;
+    float:right;
+}
+
+#divVoteHeader > div.ui-controlgroup-controls > div.ui-input-text{
+    float:none;
+}
+
+/* hide vote result input */
+#lazyMessageList  input.ui-slider-input {
+    display : none !important;
+}
+
+/* hide vote result button*/
+#lazyMessageList  div.ui-slider a {
+    display : none !important;
+}
+
+fieldset.tnm-wrap-vote-topic{
+    border-width:1px;
+}
+
+#lazyPanel > div.pane{
+    z-index:100;
+}
+
+/*use slider to emulate vote result*/
+fieldset.tnm-wrap-vote-topic div.ui-slider-track {
+    opacity:100;
+}

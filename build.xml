@@ -1,0 +1,144 @@
+<project name="NearByTalk" default="dist" basedir=".">
+    <description>
+        simple example build file
+    </description>
+    <!-- set global properties for this build -->
+    <property name="src" location="src"/>
+
+    <property name="debug" value="true"/>
+
+    <property name="build.root" location="build"/>
+    <property name="compile.dir" location="${build.root}/compile"/>
+    <property name="dist.dir"  location="${build.root}/dist"/>
+    <property name="report.dir" location="${build.root}/report"/>
+    <property name="test.dir" location="${build.root}/test"/>
+
+  <target name="init">
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build.root}"/>
+    <mkdir dir="${compile.dir}"/>
+    <mkdir dir="${dist.dir}"/>
+    <mkdir dir="${test.dir}"/>
+    <mkdir dir="${report.dir}"/>
+  </target>
+
+  <path id="javac.classpath">
+      <fileset dir="libs" includes="*.jar"/>
+  </path>
+
+  <target name="git-tag">
+        <exec executable = "git" outputproperty="version">
+            <arg value = "rev-parse" />
+            <arg value = "--short" />
+            <arg value="HEAD"/>
+        </exec>
+  </target>
+
+  <target name="compile" depends="init"
+        description="compile the source " >
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac srcdir="${src}" destdir="${compile.dir}"
+        encoding="UTF-8" 
+	classpathref="javac.classpath" debug="${debug}"/>
+  </target>
+
+  <target name="repack-jetty">
+      <zip destfile="${dist.dir}/jetty-pack.jar"
+          duplicate="preserve">
+          <zipgroupfileset dir="libs" includes="jetty-*.jar"/>
+      </zip>
+
+      <jar destfile="${dist.dir}/servlet-api-2.5.stripped.jar">
+	   <zipfileset src="libs/servlet-api-2.5.jar" excludes="about.html"/>
+      </jar>
+
+  </target>
+
+  <target name="copy-depends-jar">
+       <copy todir="${dist.dir}">
+	    <fileset dir="libs">
+		 <!--jetty-repack contains all of these-->
+		 <exclude name="jetty*.jar"/>
+		 <!--junit only-->
+		 <exclude name="junit*.jar"/>
+		 <!--only for dns test use-->
+		 <exclude name="dnsjava*.jar"/>
+		 <!--only for http test use-->
+		 <exclude name="http*.jar"/>
+		 <!--servlet jar is stripped-->
+		 <exclude name="servlet*.jar"/>
+	    </fileset>
+       </copy>
+
+  </target>
+  
+   <target name="create-db" depends="repack-jetty,copy-depends-jar">  
+      <copy file="${basedir}/misc/create_table.sql" todir="${dist.dir}"/>
+      <copy file="${basedir}/misc/reset_db.sql" todir="${dist.dir}"/>
+      
+      <java dir="${dist.dir}" fork="true"          
+          classname="org.nearbytalk.util.DBInit">
+	    <classpath location="${compile.dir}"/>
+	    <classpath location="libs/sqlite4java.jar"/>
+      </java> 
+  </target>
+  
+
+  <target name="dist" depends="compile,git-tag,repack-jetty,copy-depends-jar,create-db"
+        description="generate the distribution" >
+
+    <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+    <jar jarfile="${dist.dir}/${ant.project.name}-${version}.jar" 
+        basedir="${compile.dir}" 
+        excludes="com\nearbytalk\test\** com\nearbytalk\runtime\predefine.properties">
+    </jar>
+  </target>
+  
+  
+  
+ 
+
+  <target name="clean"
+        description="clean up" >
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build.root}"/>
+  </target>
+
+  <target name ="test" depends="init,compile">
+      
+      <junit printsummary="yes" 
+          haltonfailure="no" 
+          showoutput="yes" 
+          dir="WebRoot">	
+
+          <classpath>		
+              <fileset dir="libs"> 			
+                  <include name="**/*.jar"/>		
+              </fileset>	
+              <pathelement path="${compile.dir}"/>	
+          </classpath> 	
+
+
+          <batchtest fork="yes" todir="${test.dir}">		
+              <formatter type="xml"/> 		
+              <fileset dir="src">		
+                  <include name="**/*Test.java"/>		
+              </fileset>	
+          </batchtest>
+
+      </junit>
+
+    </target>
+
+    <target name="report-only" depends="init">
+        <junitreport todir="${report.dir}">
+            <fileset dir="${test.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${report.dir}"/>
+        </junitreport>
+    </target>
+
+
+</project>
+

@@ -1,0 +1,65 @@
+Backend: message sync between node(should not in http thread)
+
+Backend: more error detail when client login
+
+Front: search message logic
+
+Front: delay input clear when assume talk successful (not important)
+
+Backend: request attack defense
+
+Backend: statistics collect
+
+Front: support nested message(some part)
+
+Backend: use jetty handler instead of servlet
+
+Front: current TextMessage logic is actually "LongTalk". correct it
+
+Backend: config jetty form post size limit sync with fileUploadLimitBytes
+
+Front: VoteTopicMessage VoteOfMeMessage display
+
+Backend: VoteTopicMessage atomic update (some part ,needs more check)
+
+Backend: VoteOfMe dedup (some part ,needs more check)
+
+Front: strict mode js check
+
+Front: incomplete function hidden
+
+Backend: limit single user active connection(to avoid thread blocking)
+
+Front: improve not login logic
+
+Front: change servlet url to abstract
+
+GlobalServlet attack 
+
+agreeCounter disagreeCounter i18N
+
+referencedCounter runtime update cascade to client 
+
+auto truncate message list size/ auto load message when scroll down
+
+Front: switch search mode (message/user) do not trigger input onInputChanged
+
+merge QueryUserServlet and QueryMessageServlet ?
+
+more strict username rules
+
+Backend: limit single message max length
+
+Backend: crypto on uploaded files
+
+Backend: implements recycle in MemoryMessageCache (some part, need check)
+
+Backend: Session get/set attribute thread safe in jetty ?
+
+Backend: can MemoryMessageCache LRU be improved by ConcurrentSkipListMap ?
+
+Backend: filter out none-voted VoteTopicMessage content of user, impl anonymous vote
+
+Backend: refactor http i/o code out of servlet class
+
+Front: escape text to avoid html inject

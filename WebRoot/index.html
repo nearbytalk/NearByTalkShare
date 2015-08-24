@@ -1,0 +1,608 @@
+<!DOCTYPE HTML>
+<HTML>
+<head>
+<meta charset="UTF-8">
+
+<title>Talk No Money</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1">
+
+<link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css" />
+
+<link rel="stylesheet" href="css/jQMProgressBar.css" />
+
+<link type="text/css" href="/skin/circle.skin/circle.player.css" rel="stylesheet" />
+<link type="text/css" href="/skin/blue.monday/jplayer.blue.monday.css" rel="stylesheet" />
+
+
+<link rel="stylesheet" href="css/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" href="css/fancybox/jquery.fancybox-buttons.css" />
+<link rel="stylesheet" href="css/fancybox/jquery.fancybox-thumbs.css" />
+
+<link rel="stylesheet" href="css/custom.css" />
+
+
+
+
+<script src="js/jquery-1.11.1.min.js"></script>
+<script src="js/jquery.fancybox.pack.js"></script>
+<script src="js/jquery.fancybox-buttons.js"></script>
+<script src="js/jquery.fancybox-thumbs.js"></script>
+<script src="js/jquery.jplayer.min.js"></script>
+<script src="js/jquery.mobile-1.4.5.min.js"></script>
+<script src="js/jquery.sha1.js"></script>
+<script src="js/jquery.dateFormat-1.0.js"></script>
+<script src="js/jquery.sprintf.js"></script>
+<script src="js/jquery.iframe-transport.js"></script>
+<script src="js/jquery.fileupload.js"></script>
+
+<!--
+<script src="js/jquery.inview.min.js"></script>
+-->
+<script src="js/jQMProgressBar.js"></script>
+
+<script src="js/overthrow.js"></script>
+
+<!--circle skin player-->        
+<script type="text/javascript" src="js/jquery.transform2d.js"></script>
+<script type="text/javascript" src="js/jquery.grab.js"></script>
+<script type="text/javascript" src="js/mod.csstransforms.min.js"></script>
+<script type="text/javascript" src="js/circle.player.js"></script>
+<!---->        
+
+
+<!--decode-->
+<script type="text/javascript" src="js/modernizr.js"></script>
+<script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript" src="js/reedsolomon.js"></script>
+<script type="text/javascript" src="js/qrcodedecode.js"></script>
+<!--decode-->
+
+
+
+<!--nanoscroller-->
+<link rel="stylesheet" href="css/nanoscroller.css">
+<script type="text/javascript" src="js/jquery.nanoscroller.min.js"></script>
+<!--nanoscroller-->
+
+<script src="js/global.js"></script>
+
+<script src="js/html_format.js"></script>
+
+<script src="js/i18n_zh_CN.js"></script>
+
+<script src="js/session.js"></script>
+
+<script src="js/message.js"></script>
+
+<script src="js/search.js"></script>
+
+<script type="text/javascript">
+
+
+$(document).ready(function(){
+   initLogin();
+
+
+   //these are global widget, must be manual enhanced by jqm
+   $("#popupMessageMenu").enhanceWithin().popup();
+   $("#popupAudioPlayer").enhanceWithin().popup();
+   $("#popupVideoPlayer").enhanceWithin().popup();
+   $("#popupViewImageShare").enhanceWithin().popup();
+});
+
+
+</script>
+
+</head>
+
+<body>
+
+<div data-role="popup" id="popupMessageMenu" data-theme="a">
+     <ul data-role="listview" data-inset="true" style="min-width:210px;" >
+         <li id="titleMessageAction" data-role="divider" ></li>
+         <li><a id="linkBroadcast" href="#" onclick="onLinkBroadcastClicked(this)"></a></li>
+
+         <!-- not implement
+         <li><a id="linkBroadcastOrigin" href="#" onclick="onLinkBroadcastOriginClicked()"></a></li>
+         <li><a id="linkComment" href="#" onclick="onLinkCommentClicked()"></a></li>
+         -->
+         <li><a id="linkViewAuthor" href="#" onclick="onLinkViewAuthorClicked(this)"></a></li>
+         <li><a id="linkDelete" href="#" onclick="onLinkDeleteClicked(this)"></a></li>
+     </ul>
+ </div>
+
+<div data-role="popup" id="popupAudioPlayer" data-theme="e">
+
+     <div id="audio_jplayer" class="cp-jplayer"></div>
+     <div id="audio_jplayer_container" class="cp-container"> 
+	  <div class="cp-buffer-holder">  
+	       <div class="cp-buffer-1"></div> 
+	       <div class="cp-buffer-2"></div> 
+	  </div> 
+	  <div class="cp-progress-holder">  
+	       <div class="cp-progress-1"></div> 
+	       <div class="cp-progress-2"></div> 
+	  </div> 
+	  <div class="cp-circle-control"></div> 
+	  <ul class="cp-controls"> 
+	       <li><a class="cp-play" tabindex="1">play</a></li> 
+	       <li><a class="cp-pause" style="display:none;" tabindex="1">pause</a></li>  
+	  </ul> 
+     </div>
+
+</div>
+
+<div data-role="popup" id="popupVideoPlayer" data-theme="e">
+
+     <div id="video_jplayer_container" class="jp-video jp-video-full"> 
+	  <div class="jp-type-single"> 
+	       <div id="video_jplayer" data-media-inited="false" data-media-type="video" data-media-url="%s" class="jp-jplayer"></div> 
+	       <div class="jp-gui"> 
+		    <div class="jp-video-play"> 
+			 <a href="javascript:;" class="jp-video-play-icon" tabindex="1">play</a> 
+		    </div> 
+		    <div class="jp-interface"> 
+			 <div class="jp-progress"> 
+			      <div class="jp-seek-bar"> 
+				   <div class="jp-play-bar"></div> 
+			      </div> 
+			 </div> 
+			 <div class="jp-current-time"></div> 
+			 <div class="jp-duration"></div> 
+			 <div class="jp-title"> 
+			      <ul> 
+				   <li>movie info</li> 
+			      </ul> 
+			 </div> 
+			 <div class="jp-controls-holder"> 
+			      <ul class="jp-controls"> 
+				   <li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li> 
+				   <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li> 
+				   <li><a href="javascript:;" class="jp-stop" tabindex="1">stop</a></li> 
+
+				   <!--
+				   <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li> 
+				   <li><a href="javascript:;" class="jp-unmute" tabindex="1"  title="unmute">unmute</a></li> 
+				   <li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li> 
+				   -->
+			      </ul> 
+
+			      <!--
+			      <div class="jp-volume-bar"> 
+				   <div class="jp-volume-bar-value"></div> 
+			      </div> 
+			      -->
+			      <ul class="jp-toggles"> 
+			      <!--
+				   <li><a href="javascript:;" class="jp-full-screen" tabindex="1" title="fullscreen">full screen</a></li> 
+				   <li><a href="javascript:;" class="jp-restore-screen" tabindex="1" title="restore screen">restore screen</a></li> 
+				   <li><a href="javascript:;" class="jp-repeat" tabindex="1" title="repeat">repeat</a></li> 
+				   <li><a href="javascript:;" class="jp-repeat-off" tabindex="1" title="repeatoff">repeat off</a></li> 
+				   -->
+			      </ul> 
+			 </div> 
+		    </div> 
+	       </div> 
+	       <div class="jp-no-solution"> 
+		    <span>Update Required</span> 
+		    To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>. 
+	       </div> 
+	  </div> 
+     </div>
+
+
+</div>
+
+
+ <div data-role="popup" id="popupViewImageShare" class="photopopup size-limited-img-height" data-overlay-theme="a" data-corners="false" data-tolerance="30,15" >
+      <a href="#" id="buttonCloseViewImageShare" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">
+      </a>
+      <img id="imgViewImageShare" alt="TODO" class="size-limited-img-width">
+ </div>
+
+    <div data-role="page" id="pageMessage">
+
+        <div data-role="popup" id="popupUnread"  class="ui-corner-all" data-theme="d">
+            <div data-role="content" data-theme="d" class="ui-corner-bottom ui-content">
+                <p id="textPopupUnread"></p>
+                <input type="button" onclick="onButtonViewClicked()" id="buttonView" 
+                    data-inline="true" data-theme="b" />
+                <input data-rel="back" onclick="onButtonLaterClicked()" 
+                    type="button" id="buttonLater" 
+                    data-inline="true" data-theme="c"/>
+            </div>
+        </div>
+
+
+        <div data-tap-toggle="false" id="header" data-id="divHeader" data-position="fixed"
+            data-role="header">
+
+            <a href="#" id="buttonPollSwitch"  class="ui-btn-left"
+		 data-icon="comment" onclick="onButtonPollSwitchClicked()"></a>
+
+            <h1>show all messages</h1>
+
+            <a href="#" id="buttonRefresh" class="ui-btn-right"
+		 data-icon="refresh" onclick="onButtonRefreshClicked()"></a>
+        </div>
+
+
+        <div id="messageContainer" data-role="content" >
+
+     <div id="eagerPanel" class="nano ui-corner-all ui-shadow tnm-message-wrapper" >
+         <div   class="overthrow content">
+		  <dl id="eagerMessageList" class=".tnm-message-list">
+		  </dl>
+		  </div>
+     </div>
+
+
+	     <div id="divCollapseTalk" data-role="collapsible" data-content-theme="false" data-mini="true" >
+		  <h4 id="titleTalk">talk</h4>
+
+	       
+          <div id="talkFunction" data-role="navbar" class="compat-margin-top-bottom">
+               
+               <div data-enhance="false" style="height:0;width:0;visibility:hidden">
+                   <input  id="fileupload" type="file" 
+                                           onchange="onFileShareChanged(event)"
+                                           style="visibility:hidden;height:0">
+               </div>
+               <ul>
+
+                   <li><input id="buttonUpload" type="button" onclick="onButtonUploadClicked()" data-mini="true" data-icon="action" data-iconpos="bottom" class="ui-corner-tl ui-corner-bl" />
+                       </li>
+                   <li><input id="buttonTopic" type="button" data-mini="true" data-icon="heart" data-iconpos="bottom" data-corners="false"/></li>
+                   <li><input id="buttonVote" type="button" data-mini="true" data-icon="tag" data-iconpos="bottom" data-corners="false" onclick="onButtonVoteClicked()"/></li>
+                   <li><input id="buttonLongTalk" type="button" data-mini="true" data-icon="edit" data-iconpos="bottom" data-corners="false"/></li>
+                   <li><input id="buttonMention" type="button" data-mini="true" data-icon="mail" data-iconpos="bottom" data-corners="false"/></li>
+
+               </ul>
+           </div>
+	       
+
+           <div id="divVoteContainer">
+               <div id="divVoteHeader" data-role="controlgroup" data-type="horizontal" class="margin-bottom-less">
+                   <select id="flipVoteMultiSelection" name="slider-flip-m" id="slider-flip-m" data-role="slider">
+                       <option selected="">single</option>
+                       <option>multi</option>
+                   </select>
+                   <input name="inputVoteTopicTopic" id="inputVoteTopicTopic" data-wrapper-class="controlgroup-textinput ui-btn" type="text" data-mini="true" data-clear-btn="true" />
+               </div>
+
+               <ul id="listViewVoteOptions" data-role="listview">
+                   <li>
+                   <input data-clear-btn="true" type="text" onkeyup="onVoteOptionKeyUp(event)">
+                   </li>
+
+                   <li>
+                   <input data-clear-btn="true" type="text" onkeyup="onVoteOptionKeyUp(event)">
+                   </li>
+
+                   <li>
+                   <input data-clear-btn="true" type="text" onkeyup="onVoteOptionKeyUp(event)">
+                   </li>
+               </ul>
+
+           </div>
+
+
+
+            <div data-role="fieldcontain" class="compat-margin-top-bottom">
+
+                <p id="textReferenceMessagePreview" ></p>
+                <textarea name="inputTalk" id="inputTalk"
+                    style="width: 100%" onchange="onHasInput()"
+                    onfocus="onInputTalk()" data-clear-btn="true" class="compat-margin-top-bottom" ></textarea>
+	      
+	       <fieldset class="ui-grid-a">
+
+
+               <div data-role="popup" id="popupConfirmClear" data-overlay-theme="b" data-theme="b" style="max-width:400px;">
+                   <div data-role="header" data-theme="a">
+                       <h1 id="titleConfirmClear">Clear contents?</h1>
+                   </div>
+                   <div role="main" class="ui-content">
+                       <h3 id="contentConfirmClear" class="ui-title">sure to give up all contents?</h3>
+
+                       <fieldset data-role="controlgroup" data-type="horizontal">
+                           <input id="buttonConfirmClear" type="button" onclick="onButtonConfirmClearClicked()"/>
+                           <input id="buttonCancelClear" onclick="onButtonCancelClearClicked()" type="button"/>
+                           <input id="buttonClearAndNotRemind" onclick="onButtonClearAndNotRemindClicked()" type="button"/>
+                       </fieldset>
+
+                   </div>
+               </div>
+
+		    
+		    <div class="ui-block-a">
+			 <input id="buttonClear" data-icon="delete" type="button" data-theme="a" data-mini="true"
+                    onclick="onButtonClearClicked()"/></div>
+	       <div class="ui-block-b"><input data-theme="e" id="buttonTalk" type="button" data-mini="true" data-icon="comment"
+                    onclick="onButtonTalkClicked()" /></div>
+	       </fieldset>
+
+	       <div id="progressbar"></div>
+
+	       <div id="divImgSharePreview" align="center" class="size-limited-img-width">
+		    <img id="imgSharePreview" alt="your image" class="size-limited-img-height"/>
+	       </div>       
+
+	  </div>
+
+     </div> <!--collapsible-->
+
+ <div id="lazyPanel" class="nano ui-corner-all ui-shadow tnm-message-wrapper" >
+     <div   class="overthrow content">
+         <ul data-theme="c" id="lazyMessageList" data-role='listview' data-inset='true' class="tnm-message-list">
+         </ul>
+     </div>
+ </div>
+
+
+
+</div><!--data-role=content-->
+
+        <div id="footer" data-tap-toggle="false" data-id="footer" data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="#" data-icon="home"
+                        class="ui-btn-active ui-state-persist"></a></li>
+                    <li><a href="#pageMention" data-icon="mail"
+                        data-transition="slide"></a></li>
+                    <li><a href="#pageSearch" data-icon="search"></a></li>
+                    <li><a href="#pageSession" data-icon="user"></a></li>
+                </ul>
+            </div>
+            <!-- /navbar -->
+        </div>
+
+
+
+    </div>
+
+    <div data-role="page" id="pageMention">
+        <div data-id="divHeader" data-position="fixed"
+            data-role="header">
+            <h1>mention me</h1>
+            <a href="#" id="buttonRefresh" type="button" class="ui-btn-right"
+		 data-icon="refresh">refresh</a>
+        </div>
+
+        <div data-role="content">
+
+            <ul id="mentionList" data-role='listview' data-inset='true'>
+                <li>who mentions me?</li>
+            </ul>
+
+        </div>
+
+        <div data-id="footer" data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="#pageMessage" data-icon="home"
+                        data-transition="slide" data-direction="reverse"></a></li>
+                    <li><a href="#" data-icon="mail"
+                        class="ui-btn-active ui-state-persist"></a></li>
+                    <li><a href="#pageSearch" data-icon="search"
+                        data-transition="slide"></a></li>
+                    <li><a href="#pageSession" data-icon="user"></a></li>
+                </ul>
+            </div>
+            <!-- /navbar -->
+        </div>
+
+
+
+    </div>
+
+
+    <div data-role="page" id="pageSearch">
+        <div data-id="divHeader" data-position="fixed"
+            data-role="header">
+
+            <div class="ui-grid-b">
+                <div class="ui-block-a" style="width:30%;">
+                    <select id="selectSearchOption" data-role="slider" data-mini="true">
+                        <option selected="">message</option>
+                        <option>user</option>
+                    </select>
+                </div>
+                <div class="ui-block-b" style="width:65%;">
+                    
+                    <input data-mini="true" id="inputSearch" value="" type="search" 
+                    onchange="onInputSearchChanged()">
+                </div>
+            </div>
+
+
+
+
+        </div>
+
+        <div data-role="content">
+
+            <ul id="searchResultList" data-role='listview'
+                data-inset='true'>
+                <li id="searchHelp"></li>
+            </ul>
+
+        </div>
+
+        <div data-id="footer" data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="#pageMessage" data-icon="home"></a></li>
+                    <li><a href="#pageMention" data-icon="mail"
+                        data-transition="slide" data-direction="reverse"></a></li>
+                    <li><a href="#pageSearch" data-icon="search"
+                        class="ui-btn-active ui-state-persist"></a></li>
+                    <li><a href="#pageSession" data-icon="user"
+                        data-transition="slide"></a></li>
+                </ul>
+            </div>
+            <!-- /navbar -->
+        </div>
+
+    </div>
+
+
+
+    <div data-role="page" id="pageSession">
+        <div data-id="divHeader" data-position="fixed"
+            data-role="header">
+	    <h1 id="titlePageSession"></h1>
+            <a href="#" class="ui-btn-right" id="buttonChangeUser"
+                data-icon="power" onclick="onButtonChangeUserClicked()"></a>
+        </div>
+
+        <div data-role="content">
+
+            <div align="center">
+                <img id="imgAvatar" src="img/avatar.jpg"></img>
+            </div>
+
+            <label id="labelLoginHint"></label>
+	    <div style="display:none"><img id="imgLogo" src="img/logo_48x48.png"></img></div>
+
+        <label id="labelUserName" for="inputUserName"></label> 
+        <input type="text" name="userName" id="inputUserName" /> 
+
+        <label id="labelUserIdBytes" for="inputUserIdBytes"></label> 
+        
+        <input type="text" name="name" id="inputUserIdBytes" />
+
+
+
+        <div data-role="popup" id="popupPasswordLogin" data-theme="a" class="ui-corner-all">
+            <form>
+                <div style="padding:10px 20px;">
+                    <h3><label id="labelPassword"></label></h3>
+
+                    <input id="inputTempUserName" data-clear-btn="true" data-theme="a" type="text">
+
+                    <input id="inputPassword" data-clear-btn="true" name="password"  
+                    data-theme="a" value="" autocomplete="off" type="text">
+
+                    <input id="inputGeneratedIdBytes" disabled="disabled" data-theme="a" type="text">
+
+                    <strong><p id="textPasswordHint"></p></strong>
+
+                    <input id="buttonPasswordLoginOk" type="button" 
+                    onclick="onButtonPasswordLoginOkClicked()" 
+                     data-theme="c" value="OK" data-inline="true"/>
+                
+                <a id="buttonPasswordLoginCancel" href="#" 
+                    data-role="button" data-inline="true" data-rel="back" data-transition="flow" data-theme="b"></a>
+
+            </div>
+        </form>
+    </div>
+
+
+
+            <label id="labelUserDescription" for="inputUserDescription"></label> 
+            <textarea id="inputUserDescription"
+                    stype="width:100%" ></textarea>
+  
+            <label id="labelUserQrCodeHint0"></label>
+            <a id="linkSaveQrCodeImage" download="NearByTalk_ID.png" class="ui-link"></a>
+            <label id="labelUserQrCodeHint1"></label>
+            <a id="linkSaveTextIdentity" download="NearByTalk_ID.txt" class="ui-link"></a>
+            <label id="labelUserQrCodeHint2"></label>
+            <strong><p id="textUserQrCodeWarning"></p></strong>
+
+        <div align="center">
+                <a id="linkQrCodeImage" download="NearByTalk_ID.png">
+                        <img id="imgQrCode"></img>
+                </a>
+        </div>
+
+	<br/>
+
+	    <form>
+		 <label id="labelLoadQrCodeImageOrText" for="buttonLoadQrCodeImageOrText"></label>
+	
+		 <input data-clear-btn="false"  id="buttonLoadQrCodeImageOrText" type="file" 
+		 onchange="onButtonLoadQrCodeImageOrTextClicked(event)" accept="image/jpeg,image/bmp,image/png,text/plain">
+
+	    </form>
+
+        <!--temp canvas-->
+	    <canvas id="canvasQrCodeImage" width="256" height="256" style="display:none"/>
+
+	    <div data-role="popup" id="popupUserIdBytesHint" 
+		 data-overlay-theme="a" data-transition="pop"
+		 class="ui-corner-all" class="ui-content" data-position-to="#buttonChangeUser">
+
+		 <div data-role="header" data-theme="a" class="ui-corner-top">
+		      <h1 id="titleUserIdBytesHint"></h1>
+		 </div>
+
+		 <div data-role="content" data-theme="d" class="ui-corner-bottom ui-content">
+             <div align="center">
+		      <p id="textUserIdBytesHint0"></p>
+		      <img src="img/classic_sociality.png"></img>
+		      <p id="textUserIdBytesHint1"></p>
+		      <img src="img/nearbytalk_struct.png"></img>
+		      <p id="textUserIdBytesHint2"></p>
+		      <img src="img/id_between_nearbytalk.png"></img>
+		      <p id="textUserIdBytesHint3"></p>
+		      <img src="img/nearbytalk_p2p.png"></img>
+          </div>
+		      <a href="#" data-role="button" data-inline="true" data-rel="back" data-transition="flow" data-theme="b">OK</a>
+
+		 </div>
+	    </div>
+
+
+	    <div data-role="popup" id="popupLoginQrCodeImage" 
+		 data-overlay-theme="d" 
+		 data-theme="c" style="max-width:400px;" class="ui-corner-all" class="ui-content" data-position-to="#buttonChangeUser">
+
+		 <div data-role="header" data-theme="a" class="ui-corner-top">
+		      <h1 id="titleLoadIdentifySuccess"></h1>
+		 </div>
+
+		 <div data-role="content" data-theme="d" class="ui-corner-bottom ui-content">
+		      <p id="toolTipLoginQrCodeImage"></p>
+
+		      <a data-role="button" data-inline="true" data-rel="back" data-theme="c" 
+			   onclick="onButtonChangeUserClicked()">OK</a>
+
+		      <a href="#" id="buttonLoginLater" 
+			   data-role="button" data-inline="true" data-rel="back" data-transition="flow" data-theme="b"></a>
+
+		 </div>
+
+
+	    </div>
+
+
+
+        </div>
+
+
+        <div data-id="footer" data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="#pageMessage" data-icon="home"></a></li>
+                    <li><a href="#pageMention" data-icon="mail"></a></li>
+                    <li><a href="#pageSearch" data-icon="search"
+                        data-transition="slide" data-direction="reverse"></a></li>
+                    <li><a href="#" data-icon="user"
+                        class="ui-btn-active ui-state-persist"></a></li>
+                </ul>
+            </div>
+            <!-- /navbar -->
+        </div>
+
+    </div>
+
+
+
+
+</body>
+
+</HTML>

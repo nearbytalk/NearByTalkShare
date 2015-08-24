@@ -1,0 +1,39 @@
+<configuration debug="true">
+	<!-- sends logs to logback-beagle 
+	<consolePlugin />
+	-->
+	
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		    <!-- encoders are assigned the type         ch.qos.logback.classic.encoder.PatternLayoutEncoder 
+			by default -->
+		   
+		<encoder>
+			     
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+			</pattern>
+			   
+		</encoder>
+		 
+	</appender>
+
+<!-- 
+	<appender name="lilith" class="ch.qos.logback.classic.net.SocketAppender">
+	     <RemoteHost>localhost</RemoteHost>
+	     <Port>4560</Port>
+	     <ReconnectionDelay>170</ReconnectionDelay>
+	     <IncludeCallerData>true</IncludeCallerData>
+	</appender>
+
+	 -->
+	<logger name="org.eclipse" level="INFO"/>
+	 
+	<logger name="org.nearbytalk.http.SessionFilter" level="INFO"/>
+	<logger name="org.nearbytalk.http.PollServlet" level="INFO"/>
+	<logger name="org.nearbytalk.runtime.BaseListener" level="INFO"/>
+	
+	<root level="trace">
+		   
+		<appender-ref ref="STDOUT" />
+		 
+	</root>
+</configuration>
