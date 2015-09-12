@@ -222,4 +222,9 @@ public class TestDataStore implements IDataStore {
 		return false;
 	}
 
+	@Override
+	public byte[] getFileKey() {
+		return "0123456789123456".getBytes();
+	}
+
 }

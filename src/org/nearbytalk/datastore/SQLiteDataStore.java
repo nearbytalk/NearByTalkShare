@@ -18,6 +18,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.nearbytalk.exception.DataStoreException;
 import org.nearbytalk.exception.IncorrectPasswordException;
 import org.nearbytalk.identity.AbstractMessage;
+import org.nearbytalk.identity.AbstractMessage.MessageType;
 import org.nearbytalk.identity.BaseUserInfo;
 import org.nearbytalk.identity.ChatBuildMessage;
 import org.nearbytalk.identity.ClientUserInfo;
@@ -26,7 +27,6 @@ import org.nearbytalk.identity.RefUniqueFile;
 import org.nearbytalk.identity.SpecialIdentifiable;
 import org.nearbytalk.identity.VoteOfMeMessage;
 import org.nearbytalk.identity.VoteTopicMessage;
-import org.nearbytalk.identity.AbstractMessage.MessageType;
 import org.nearbytalk.query.PagedQuery.PagedInfo;
 import org.nearbytalk.runtime.DateFormaterThreadInstance;
 import org.nearbytalk.runtime.Global;
@@ -56,6 +56,12 @@ public class SQLiteDataStore implements IDataStore {
 	public static SQLParts messageExistParts = new SQLParts(
 			"SELECT 1 FROM ABSTRACT_MESSAGE WHERE ID_BYTES = ? "
 			).fix();
+	
+	public static SQLParts randomFileKeyParts= new SQLParts("" +
+			"INSERT INTO META_TABLE VALUES (\"FILE_KEY\",randomblob(16))").fix();
+	
+	public static SQLParts queryFileKeyParts = new SQLParts("" +
+			"SELECT VALUE FROM META_TABLE WHERE KEY='FILE_KEY'").fix();
 	
 	public static SQLParts updateVoteTopicParts = new SQLParts(
 			"UPDATE ABSTRACT_MESSAGE " +
@@ -1488,6 +1494,45 @@ public class SQLiteDataStore implements IDataStore {
 			
 		} finally {
 			safeDispose(stmt);
+		}
+	}
+	
+	private byte[] unchangedMasterKey;
+
+	@Override
+	public byte[] getFileKey() {
+		
+		if(unchangedMasterKey!=null){
+			return unchangedMasterKey;
+		}
+
+		SQLiteStatement queryStmt=null;
+		SQLiteStatement initStmt=null;
+		try {
+			SQLiteConnection conn=packedVarThreadLocal.get().connection;
+			
+			queryStmt=conn.prepare(queryFileKeyParts);
+			
+			queryStmt.step();
+			
+			if (queryStmt.hasRow()) {
+				
+				unchangedMasterKey=queryStmt.columnBlob(0);
+				return unchangedMasterKey;
+			}
+			
+			initStmt=conn.prepare(randomFileKeyParts);
+			
+			initStmt.stepThrough();
+			
+			return getFileKey();
+			
+		} catch (SQLiteException e) {
+			log.error("impossible {}",e);
+			return null;
+		} finally {
+			safeDispose(queryStmt);
+			safeDispose(initStmt);
 		}
 	}
 }

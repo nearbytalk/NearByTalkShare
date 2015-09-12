@@ -174,5 +174,11 @@ public interface IDataStore {
 	 * @throws SQLiteException 
 	 */
 	public boolean existMessage(String idBytes) throws SQLiteException;
+	
+	/**
+	 * @return 16 byte for file upload encrypt/decrypt, if already exists, use existed key, or use a random key
+	 */
+	public byte[] getFileKey();
+	
 
 }

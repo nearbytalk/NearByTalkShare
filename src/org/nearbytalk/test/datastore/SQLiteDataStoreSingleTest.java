@@ -661,5 +661,13 @@ public class SQLiteDataStoreSingleTest extends SQLiteDataStoreShareTest{
 			
 				});
 	}
+	
+	public void testGetFileKey(){
+		byte[] ret=dataStore.getFileKey();
+		
+		assertNotNull(ret);
+		
+		assertEquals(ret.length,16);
+	}
 
 }
