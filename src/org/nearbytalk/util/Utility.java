@@ -152,8 +152,6 @@ public class Utility {
 
 	}
 
-	private static AtomicInteger DISTRIBUTED_COUNTER = new AtomicInteger(0);
-
 	/**
 	 * write input stream as a RefCountFile (for http client upload use) if
 	 * stream overflow sizeLimit,FileShareException is thrown
