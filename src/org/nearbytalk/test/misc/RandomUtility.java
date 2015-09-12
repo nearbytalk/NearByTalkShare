@@ -73,12 +73,16 @@ public class RandomUtility {
 	}
 	
 	public static RefUniqueFile randomUploadFile() throws FileShareException, IOException{
+		return randomUploadFile(randomBytes16());
+	}
+
+	public static RefUniqueFile randomUploadFile(byte[] cryptKey) throws FileShareException, IOException{
 		
 		String randomString=nextString();
 		
 		InputStream randomStream=new ByteArrayInputStream(randomString.getBytes());
 		
-		return Utility.writeUploadStream(randomStream, Integer.MAX_VALUE, randomString+".txt");
+		return Utility.writeUploadStream(randomStream, Integer.MAX_VALUE, randomString+".txt",cryptKey);
 		
 	}
 
@@ -111,6 +115,18 @@ public class RandomUtility {
 	 * @throws FileShareException
 	 * @throws IOException
 	 */
+	public static PlainTextMessage randomFileShareMessage(ClientUserInfo info,byte[] cryptKey) throws FileShareException, IOException{
+		RefUniqueFile randomFile=randomUploadFile(cryptKey);
+		
+		PlainTextMessage ret=randomNoRefTextMessage(info);
+		try {
+			ret.setReferenceMessageLater(randomFile);
+		} catch (BadReferenceException e) {
+			//impossible
+		}
+		return ret;
+	}
+	
 	public static PlainTextMessage randomFileShareMessage(ClientUserInfo info) throws FileShareException, IOException{
 		RefUniqueFile randomFile=randomUploadFile();
 		

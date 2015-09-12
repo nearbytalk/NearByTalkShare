@@ -63,10 +63,13 @@ import org.eclipse.jetty.util.QuotedStringTokenizer;
 import org.eclipse.jetty.util.URIUtil;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
+import org.eclipse.jetty.util.resource.FileResource;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceCollection;
 import org.eclipse.jetty.util.resource.ResourceFactory;
 import org.nearbytalk.runtime.Global;
+import org.nearbytalk.runtime.UniqueObject;
+import org.nearbytalk.util.Utility;
 
 
 /* ------------------------------------------------------------ */
@@ -271,6 +274,18 @@ public class CustomResourceServlet extends HttpServlet implements
 		try {
 			if (_resourceBase != null) {
 				r = _resourceBase.addPath(pathInContext);
+				
+				if(pathInContext.startsWith("/upload")){
+					//read from encrypted file
+					
+					FileResource fileResource=(FileResource) r;
+					
+					if (fileResource.exists()) {
+						
+						fileResource.setDecryptKey(UniqueObject.getInstance().getDataStore().getFileKey());
+					}
+				}
+				
 			} else {
 				URL u = _servletContext.getResource(pathInContext);
 				r = _contextHandler.newResource(u);

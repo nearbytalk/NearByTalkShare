@@ -2,6 +2,7 @@ package org.nearbytalk.test.misc;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -14,6 +15,7 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 import org.nearbytalk.exception.FileShareException;
 import org.nearbytalk.identity.AbstractMessage;
@@ -89,7 +91,8 @@ public class UtilityTest extends TestCase {
 
 		// same size ,should not throw
 		RefUniqueFile file = Utility.writeUploadStream(randomStream,
-				bytes.length, randomString + ".txt");
+				bytes.length, randomString + ".txt",
+				RandomUtility.randomBytes16());
 
 		randomString = RandomUtility.nextString();
 
@@ -109,7 +112,8 @@ public class UtilityTest extends TestCase {
 
 		try {
 			RefUniqueFile file = Utility.writeUploadStream(randomStream, 0,
-					randomString + ".txt");
+					randomString + ".txt",
+					RandomUtility.randomBytes16());
 
 			fail("should throw");
 		} catch (FileShareException e) {
@@ -247,5 +251,28 @@ public void testHasCrossIndex() {
 		assertFalse(Utility.isEmptyString("a"));
 		assertFalse(Utility.isEmptyString(","));
 		assertFalse(Utility.isEmptyString(RandomUtility.nextString()));
+	}
+	
+	public void testEncryptDecryptStream() throws FileShareException, IOException{
+	
+		String randomString = RandomUtility.nextString();
+
+		byte[] bytes = randomString.getBytes();
+		InputStream randomStream = new ByteArrayInputStream(bytes);
+		
+		byte[] key="0123456789abcdef" .getBytes();
+
+		// same size ,should not throw
+		RefUniqueFile file = Utility.writeUploadStream(randomStream,
+				bytes.length, randomString + ".txt",
+				key);	
+		
+		
+		InputStream readBack=Utility.getDecryptedStream(new FileInputStream(Utility.makeupUploadPath()+File.separatorChar+file.getFileName()), key);
+		
+		
+		byte[] cmp=IOUtils.toByteArray(readBack);
+		
+		assertTrue(Arrays.equals(cmp, bytes));
 	}
 }

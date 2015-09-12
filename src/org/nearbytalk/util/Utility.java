@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.DigestInputStream;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,8 +18,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
+
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.nearbytalk.datastore.SQLiteDataStore.MessageRecord;
 import org.nearbytalk.exception.BadReferenceException;
@@ -152,6 +159,25 @@ public class Utility {
 
 	}
 
+	public static InputStream getDecryptedStream(InputStream plainInputStream,byte[] decryptKey){
+		
+		Cipher cipher= DigestUtility.getAESCipher();
+		
+		SecretKeySpec keySpec=new SecretKeySpec(decryptKey, "AES");
+		
+		try {
+			cipher.init(Cipher.DECRYPT_MODE, keySpec,
+					new IvParameterSpec(decryptKey));
+		} catch (InvalidKeyException e) {
+			log.error("impossible {}",e);
+		} catch (InvalidAlgorithmParameterException e) {
+			log.error("impossible {}",e);
+		}
+		
+		CipherInputStream ret=new CipherInputStream(plainInputStream, cipher);
+		
+		return ret;
+	}
 	/**
 	 * write input stream as a RefCountFile (for http client upload use) if
 	 * stream overflow sizeLimit,FileShareException is thrown
@@ -166,7 +192,7 @@ public class Utility {
 	 * @throws FileShareException
 	 */
 	public static RefUniqueFile writeUploadStream(InputStream is,
-			long sizeLimit, String fileName) throws IOException,
+			long sizeLimit, String fileName,byte[] encryptKey) throws IOException,
 			FileShareException {
 
 		File tempUploadRoot = new File(Utility.makeupTempUploadPath());
@@ -192,7 +218,25 @@ public class Utility {
 
 		File tempUpload = File.createTempFile("upload", suffix, tempUploadRoot);
 
-		FileOutputStream oStream = new FileOutputStream(tempUpload);
+		
+		FileOutputStream fileOstream= new FileOutputStream(tempUpload);
+
+		Cipher aesCipher=DigestUtility.getAESCipher();
+		
+		SecretKeySpec keySpec=new SecretKeySpec(encryptKey, "AES");
+		
+		try {
+			aesCipher.init(Cipher.ENCRYPT_MODE,keySpec,
+					new IvParameterSpec(encryptKey));
+		} catch (InvalidKeyException e) {
+			log.error("error: {}",e);
+			//impossible
+		} catch (InvalidAlgorithmParameterException e) {
+			// TODO Auto-generated catch block
+			log.error("error: {}",e);
+		}
+		
+		CipherOutputStream aesOstream=new CipherOutputStream(fileOstream, aesCipher);
 
 		// copy from commons-io IOUtils.copy
 		long count = 0;
@@ -204,7 +248,7 @@ public class Utility {
 		boolean overflow = false;
 
 		while (-1 != (n = digestInputStream.read(buffer))) {
-			oStream.write(buffer, 0, n);
+			aesOstream.write(buffer, 0, n);
 			count += n;
 			if (sizeLimit < count) {
 				overflow = true;
@@ -213,7 +257,8 @@ public class Utility {
 		}
 
 		digestInputStream.close();
-		oStream.close();
+		aesOstream.close();
+
 
 		if (overflow) {
 			log.error("file size overflow limit {},delete tempFile {}",

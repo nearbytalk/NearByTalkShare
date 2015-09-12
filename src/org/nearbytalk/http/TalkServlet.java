@@ -149,7 +149,8 @@ public class TalkServlet extends AbstractServlet {
 				//no other thread will delete the file
 				//only server GC action can delete unused file
 				refCountFile=Utility.writeUploadStream(item.openStream(),
-						Global.getInstance().fileUploadLimitByte, item.getName());
+						Global.getInstance().fileUploadLimitByte, item.getName(),
+						UniqueObject.getInstance().getDataStore().getFileKey());
 
 				log.debug("file part of multi part request parsed:{}",refCountFile.getFileName());
 				
