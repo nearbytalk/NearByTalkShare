@@ -9,6 +9,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.regex.Pattern;
 
+import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
+
 import org.nearbytalk.exception.NullFieldException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +20,7 @@ import org.slf4j.LoggerFactory;
 public class DigestUtility {
 
 	public final static String DIGEST_ALGORITHM = "SHA-1";
+	public final static String CIPER_ALGORITHM = "AES/CBC/PKCS5Padding";
 	
 	private static final Logger log=LoggerFactory.getLogger(DigestUtility.class);
 
@@ -80,6 +84,20 @@ public class DigestUtility {
 
 		return digest.digest();
 
+	}
+	
+	public static Cipher getAESCipher(){
+		Cipher cipher=null;
+		
+		try {
+			cipher=Cipher.getInstance(CIPER_ALGORITHM);
+		} catch (NoSuchAlgorithmException e) {
+			log.error(CIPER_ALGORITHM +" not support ");
+		} catch (NoSuchPaddingException e) {
+			log.error(CIPER_ALGORITHM +" padding not supported");
+		}
+		
+		return cipher;
 	}
 	
 	public static MessageDigest getSHA1Digest(){
