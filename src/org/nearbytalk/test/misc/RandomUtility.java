@@ -270,4 +270,11 @@ public class RandomUtility {
 		return new VoteOfMeMessage(sender, "comment"+nextString(10), options, topic);
 		
 	}
+	
+	public static byte[] randomBytes16(){
+		
+		byte[] ret=new byte[16];
+		random.nextBytes(ret);
+		return ret;
+	}
 }
