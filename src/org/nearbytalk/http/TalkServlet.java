@@ -20,12 +20,12 @@ import org.nearbytalk.exception.DataStoreException;
 import org.nearbytalk.exception.DuplicateMessageException;
 import org.nearbytalk.exception.FileShareException;
 import org.nearbytalk.identity.AbstractMessage;
+import org.nearbytalk.identity.AbstractMessage.MessageType;
 import org.nearbytalk.identity.ClientUserInfo;
 import org.nearbytalk.identity.PlainTextMessage;
 import org.nearbytalk.identity.RefUniqueFile;
 import org.nearbytalk.identity.VoteOfMeMessage;
 import org.nearbytalk.identity.VoteTopicMessage;
-import org.nearbytalk.identity.AbstractMessage.MessageType;
 import org.nearbytalk.runtime.Global;
 import org.nearbytalk.runtime.GsonThreadInstance;
 import org.nearbytalk.runtime.UniqueObject;
@@ -121,8 +121,10 @@ public class TalkServlet extends AbstractServlet {
 					log.warn("non-standard text message field name:{}",name);
 				}
 
+				//although we already know it's PlainTextMessage,but AbstractMessage json deserialize
+				//has extra process, so we still needs to be deserialize through AbsractMessage
 				ret=gson.fromJson(
-						new JsonReader(new InputStreamReader(item.openStream())), PlainTextMessage.class);
+						new JsonReader(new InputStreamReader(item.openStream())), AbstractMessage.class);
 				
 				// here we assume user info in session
 				//(user with no session will be rejected by session filter)
